@@ -17,6 +17,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "usr")
 public class User implements UserDetails {
 
     @Id
@@ -30,7 +31,7 @@ public class User implements UserDetails {
 
     private String email;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     private Set<Role> roles;
 
     @JsonIgnore
