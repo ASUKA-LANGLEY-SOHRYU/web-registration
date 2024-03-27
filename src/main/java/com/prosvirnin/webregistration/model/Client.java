@@ -23,4 +23,9 @@ public class Client {
 
     @JsonIgnore
     private String password;
+
+    private String email;
+
+    @JsonIgnore
+    private String activationCode;
 }
