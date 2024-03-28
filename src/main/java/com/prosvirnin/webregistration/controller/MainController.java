@@ -19,7 +19,7 @@ public class MainController {
 
     @GetMapping("/hello")
     public ResponseEntity<String> hi(Authentication authentication){
-        User user =(User) authentication.getPrincipal();
+        User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok("hrllo " + user.getEmail());
     }
 }
