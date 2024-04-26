@@ -5,7 +5,6 @@ import com.prosvirnin.webregistration.model.Role;
 import com.prosvirnin.webregistration.model.User;
 import com.prosvirnin.webregistration.model.auth.AuthenticationRequest;
 import com.prosvirnin.webregistration.model.auth.AuthenticationResponse;
-import com.prosvirnin.webregistration.repository.RoleRepository;
 import com.prosvirnin.webregistration.repository.UserRepository;
 import com.prosvirnin.webregistration.service.security.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +19,13 @@ import java.util.Collections;
 public class AuthenticationService {
 
     private final UserRepository userRepository;
-
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthenticationService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JWTService jwtService, AuthenticationManager authenticationManager) {
+    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, JWTService jwtService, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
@@ -37,15 +33,16 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(AuthenticationRequest request){
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new EmailAlreadyExistsException(request.getEmail());
+            throw new EmailAlreadyExistsException(String.format(
+                    "Email %s already exist.", request.getEmail()
+            ));
         }
-        var role = new Role("ROLE_USER");
+        var role = Role.USER;
         var user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(Collections.singleton(role))
                 .build();
-        roleRepository.save(role);
         userRepository.save(user);
         return getAuthenticationResponse(user);
     }
