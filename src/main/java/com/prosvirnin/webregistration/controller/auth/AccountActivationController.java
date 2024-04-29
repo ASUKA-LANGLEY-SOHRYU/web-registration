@@ -2,7 +2,6 @@ package com.prosvirnin.webregistration.controller.auth;
 
 import com.prosvirnin.webregistration.model.account.ActivationRequest;
 import com.prosvirnin.webregistration.model.account.ActivationResponse;
-import com.prosvirnin.webregistration.model.auth.AuthenticationRequest;
 import com.prosvirnin.webregistration.service.auth.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

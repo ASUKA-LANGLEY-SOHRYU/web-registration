@@ -2,6 +2,8 @@ package com.prosvirnin.webregistration.model;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "client")
 public class Client {
@@ -14,4 +16,8 @@ public class Client {
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Temporal(value = TemporalType.DATE)
+    @Column(name = "birthdate")
+    private Date birthDate;
 }
