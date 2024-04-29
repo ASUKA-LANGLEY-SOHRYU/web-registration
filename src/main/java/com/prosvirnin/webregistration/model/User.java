@@ -24,17 +24,17 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     private String fullName;
 
     @JsonIgnore
+    @Column(name = "password")
     private String password;
 
-    private String email;
-
-    @JsonIgnore
-    private String activationCode;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private ActivationCode activationCode;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
