@@ -14,10 +14,10 @@ public class Client {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Temporal(value = TemporalType.DATE)
-    @Column(name = "birthdate")
+    @Column(name = "birthdate", nullable = false)
     private Date birthDate;
 }
