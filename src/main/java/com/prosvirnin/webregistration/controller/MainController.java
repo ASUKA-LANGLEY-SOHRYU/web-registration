@@ -1,6 +1,6 @@
 package com.prosvirnin.webregistration.controller;
 
-import com.prosvirnin.webregistration.model.User;
+import com.prosvirnin.webregistration.model.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;

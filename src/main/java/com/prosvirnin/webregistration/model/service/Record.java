@@ -1,5 +1,7 @@
-package com.prosvirnin.webregistration.model;
+package com.prosvirnin.webregistration.model.service;
 
+import com.prosvirnin.webregistration.model.user.Client;
+import com.prosvirnin.webregistration.model.user.Master;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,5 +44,6 @@ public class Record {
     @JoinColumn(name = "service_id", nullable = false)
     private Service service;
 
-    //TODO: добавить поле
+    @Enumerated(EnumType.STRING)
+    private RecordStatus recordStatus;
 }

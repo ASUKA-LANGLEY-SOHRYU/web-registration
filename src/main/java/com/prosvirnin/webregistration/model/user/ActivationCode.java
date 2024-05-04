@@ -1,4 +1,4 @@
-package com.prosvirnin.webregistration.model;
+package com.prosvirnin.webregistration.model.user;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

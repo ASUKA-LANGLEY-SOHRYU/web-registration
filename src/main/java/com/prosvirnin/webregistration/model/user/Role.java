@@ -1,4 +1,4 @@
-package com.prosvirnin.webregistration.model;
+package com.prosvirnin.webregistration.model.user;
 
 public enum Role {
     USER,

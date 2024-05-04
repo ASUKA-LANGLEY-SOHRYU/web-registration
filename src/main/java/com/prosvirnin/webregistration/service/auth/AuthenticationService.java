@@ -1,9 +1,9 @@
 package com.prosvirnin.webregistration.service.auth;
 
 import com.prosvirnin.webregistration.exception.auth.EmailAlreadyExistsException;
-import com.prosvirnin.webregistration.model.ActivationCode;
-import com.prosvirnin.webregistration.model.Role;
-import com.prosvirnin.webregistration.model.User;
+import com.prosvirnin.webregistration.model.user.ActivationCode;
+import com.prosvirnin.webregistration.model.user.Role;
+import com.prosvirnin.webregistration.model.user.User;
 import com.prosvirnin.webregistration.model.account.ActivationResponse;
 import com.prosvirnin.webregistration.model.auth.AuthenticationRequest;
 import com.prosvirnin.webregistration.model.auth.AuthenticationResponse;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service

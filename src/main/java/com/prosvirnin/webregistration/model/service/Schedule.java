@@ -1,10 +1,10 @@
-package com.prosvirnin.webregistration.model;
+package com.prosvirnin.webregistration.model.service;
 
+import com.prosvirnin.webregistration.model.user.Master;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 

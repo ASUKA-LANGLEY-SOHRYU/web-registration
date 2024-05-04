@@ -1,6 +1,7 @@
-package com.prosvirnin.webregistration.model;
+package com.prosvirnin.webregistration.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.prosvirnin.webregistration.model.Image;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +28,7 @@ public class User implements UserDetails {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "first_name", nullable = false)

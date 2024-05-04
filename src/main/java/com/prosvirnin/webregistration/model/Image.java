@@ -1,5 +1,6 @@
 package com.prosvirnin.webregistration.model;
 
+import com.prosvirnin.webregistration.model.user.Master;
 import jakarta.persistence.*;
 
 import java.sql.Blob;
@@ -19,6 +20,10 @@ public class Image {
     @Lob
     @Column(name = "file")
     private Blob file;
+
+    @ManyToOne
+    @JoinColumn(name = "master_id")
+    private Master master;
 
 // файл уже содержит информацию о типе.
 //    @Column(name = "type")

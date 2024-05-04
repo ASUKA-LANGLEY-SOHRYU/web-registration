@@ -1,6 +1,6 @@
 package com.prosvirnin.webregistration.repository;
 
-import com.prosvirnin.webregistration.model.User;
+import com.prosvirnin.webregistration.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
