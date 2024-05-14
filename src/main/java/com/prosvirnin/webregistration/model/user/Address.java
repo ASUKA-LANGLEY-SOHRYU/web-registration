@@ -1,5 +1,7 @@
 package com.prosvirnin.webregistration.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.prosvirnin.webregistration.model.user.dto.EditAddressDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +23,7 @@ public class Address {
     @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "master_id")
+    @JsonIgnore
     private Master master;
 
     @Column(name = "country")
@@ -37,4 +40,17 @@ public class Address {
 
     @Column(name = "office")
     private String office;
+
+    public void setFields(Address address){
+        if (address.getCountry() != null)
+            country = address.getCountry();
+        if (address.getCity() != null)
+            city = address.getCity();
+        if (address.getStreet() != null)
+            street = address.getStreet();
+        if (address.getHouse() != null)
+            house = address.getHouse();
+        if (address.getOffice() != null)
+            office = address.getOffice();
+    }
 }

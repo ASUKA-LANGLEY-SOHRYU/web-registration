@@ -1,4 +1,4 @@
-package com.prosvirnin.webregistration.controller.auth;
+package com.prosvirnin.webregistration.controller;
 
 import com.prosvirnin.webregistration.model.user.User;
 import com.prosvirnin.webregistration.service.UserService;

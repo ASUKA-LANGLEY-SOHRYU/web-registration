@@ -25,6 +25,7 @@ public class RegistrationRequest implements Mapper<User> {
     public User map() {
         var user = User.builder()
                 .email(email)
+                .emailToChange(email)
                 .password(password)
                 .firstName(firstName)
                 .lastName(lastName)

@@ -2,6 +2,7 @@ package com.prosvirnin.webregistration.controller.auth;
 
 import com.prosvirnin.webregistration.model.account.ActivationRequest;
 import com.prosvirnin.webregistration.model.account.ActivationResponse;
+import com.prosvirnin.webregistration.service.auth.AccountActivationService;
 import com.prosvirnin.webregistration.service.auth.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,12 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 )
 public class AccountActivationController {
 
-    private final AuthenticationService authenticationService;
+    private final AccountActivationService accountActivationService;
 
     @Autowired
-    public AccountActivationController(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
+    public AccountActivationController(AccountActivationService accountActivationService) {
+        this.accountActivationService = accountActivationService;
     }
+
 
     @Operation(
             description = "A method for activating the account. " +
@@ -34,6 +36,6 @@ public class AccountActivationController {
     @PostMapping("/activate")
     public ResponseEntity<ActivationResponse> activate(@RequestBody ActivationRequest request,
                                                        Authentication authentication){
-        return ResponseEntity.ok(authenticationService.activate(request.getCode(), authentication));
+        return ResponseEntity.ok(accountActivationService.activate(request.getCode(), authentication));
     }
 }

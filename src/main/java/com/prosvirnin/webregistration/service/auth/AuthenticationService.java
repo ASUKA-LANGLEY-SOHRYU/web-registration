@@ -30,33 +30,28 @@ import java.util.concurrent.ThreadLocalRandom;
 public class AuthenticationService {
 
     private final UserRepository userRepository;
-    private final ActivationCodeRepository activationCodeRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final MailSender mailSender;
-
     private final ClientRepository clientRepository;
-
     private final MasterRepository masterRepository;
+    private  final AccountActivationService accountActivationService;
 
-    @Value("${sendActivationCode}")
-    private Boolean sendActivationCode;
 
     @Autowired
-    public AuthenticationService(UserRepository userRepository, ActivationCodeRepository activationCodeRepository, PasswordEncoder passwordEncoder, JWTService jwtService, AuthenticationManager authenticationManager, MailSender mailSender, ClientRepository clientRepository, MasterRepository masterRepository) {
+    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, JWTService jwtService, AuthenticationManager authenticationManager, ClientRepository clientRepository, MasterRepository masterRepository, AccountActivationService accountActivationService) {
         this.userRepository = userRepository;
-        this.activationCodeRepository = activationCodeRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
-        this.mailSender = mailSender;
         this.clientRepository = clientRepository;
         this.masterRepository = masterRepository;
+        this.accountActivationService = accountActivationService;
     }
     @Transactional
     public AuthenticationResponse register(RegistrationRequest request){
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(request.getEmail()) ||
+                userRepository.existsByEmailToChange(request.getEmail())) {
             throw new EmailAlreadyExistsException(String.format(
                     "Email %s already exist.", request.getEmail()));
         }
@@ -64,10 +59,10 @@ public class AuthenticationService {
         var user = request.map();
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        if (sendActivationCode)
-            sendActivationCode(user);
-        else
+        accountActivationService.sendActivationCode(user);
+        if(!accountActivationService.getSendActivationCode())
             userRepository.save(user);
+
         if (user.getRoles().contains(Role.CLIENT))
             clientRepository.save(user.getClient());
         if (user.getRoles().contains(Role.MASTER))
@@ -76,36 +71,10 @@ public class AuthenticationService {
         return getAuthenticationResponse(user);
     }
 
-    private void sendActivationCode(User user) {
-        var activationCode = ActivationCode.builder()
-                .code(getNewActivationCode())
-                .build();
-
-        user.setActivationCode(activationCode);
-        activationCode.setUser(user);
-
-        mailSender.send(
-                user.getEmail(),
-                "Activation code",
-                String.format("Ваш код активаци: %s", user.getActivationCode().getCode())
-        );
-        userRepository.save(user);
-        activationCodeRepository.save(activationCode);
-    }
-
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
         return getAuthenticationResponse(user);
-    }
-
-    public ActivationResponse activate(String code, Authentication authentication){
-        var user = (User) authentication.getPrincipal();
-        if (user.getActivationCode().getCode().equals(code)) {
-            user.setActivationCode(null);
-            return ActivationResponse.ok();
-        }
-        return ActivationResponse.wrongCode();
     }
 
     private AuthenticationResponse getAuthenticationResponse(User user){
@@ -115,10 +84,4 @@ public class AuthenticationService {
                 .build();
     }
 
-    private String getNewActivationCode(){
-        return Integer.toString(ThreadLocalRandom
-            .current()
-            .nextInt(1000,9999)
-        );
-    }
 }
