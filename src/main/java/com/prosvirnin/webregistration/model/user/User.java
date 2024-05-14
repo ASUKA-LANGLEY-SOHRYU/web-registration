@@ -58,6 +58,14 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
+    @OneToOne(mappedBy = "user")
+    @JsonManagedReference
+    private Master master;
+
+    @OneToOne(mappedBy = "user")
+    @JsonManagedReference
+    private Client client;
+
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {

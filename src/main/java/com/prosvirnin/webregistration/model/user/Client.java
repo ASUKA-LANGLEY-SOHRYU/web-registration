@@ -1,12 +1,20 @@
 package com.prosvirnin.webregistration.model.user;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "client")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Client {
 
     @Id
@@ -16,9 +24,11 @@ public class Client {
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
 
     @ManyToMany(mappedBy = "clients")
+    @JsonIgnore
     private List<Master> masters;
 
     @Temporal(value = TemporalType.DATE)

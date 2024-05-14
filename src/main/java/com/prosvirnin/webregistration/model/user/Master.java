@@ -1,5 +1,7 @@
 package com.prosvirnin.webregistration.model.user;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.prosvirnin.webregistration.model.Image;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,12 +25,14 @@ public class Master {
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "link_code", nullable = false)
+    //TODO: решить вопрос с полем
+    @Column(name = "link_code") //, nullable = false)
     private String linkCode;
 
     @Column(name = "messenger")
@@ -40,9 +44,11 @@ public class Master {
             joinColumns = @JoinColumn(name = "master_id"),
             inverseJoinColumns = @JoinColumn(name = "client_id")
     )
+    @JsonIgnore
     private List<Client> clients;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "master")
+    @JsonIgnore
     private Set<Image> additionalImages;
 
     @OneToOne

@@ -1,6 +1,7 @@
 package com.prosvirnin.webregistration.service.auth;
 
 import com.prosvirnin.webregistration.exception.auth.EmailAlreadyExistsException;
+import com.prosvirnin.webregistration.model.auth.RegistrationRequest;
 import com.prosvirnin.webregistration.model.user.ActivationCode;
 import com.prosvirnin.webregistration.model.user.Role;
 import com.prosvirnin.webregistration.model.user.User;
@@ -8,6 +9,8 @@ import com.prosvirnin.webregistration.model.account.ActivationResponse;
 import com.prosvirnin.webregistration.model.auth.AuthenticationRequest;
 import com.prosvirnin.webregistration.model.auth.AuthenticationResponse;
 import com.prosvirnin.webregistration.repository.ActivationCodeRepository;
+import com.prosvirnin.webregistration.repository.ClientRepository;
+import com.prosvirnin.webregistration.repository.MasterRepository;
 import com.prosvirnin.webregistration.repository.UserRepository;
 import com.prosvirnin.webregistration.service.MailSender;
 import com.prosvirnin.webregistration.service.security.JWTService;
@@ -33,31 +36,47 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final MailSender mailSender;
 
+    private final ClientRepository clientRepository;
+
+    private final MasterRepository masterRepository;
+
     @Value("${sendActivationCode}")
     private Boolean sendActivationCode;
 
     @Autowired
-    public AuthenticationService(UserRepository userRepository, ActivationCodeRepository activationCodeRepository, PasswordEncoder passwordEncoder, JWTService jwtService, AuthenticationManager authenticationManager, MailSender mailSender) {
+    public AuthenticationService(UserRepository userRepository, ActivationCodeRepository activationCodeRepository, PasswordEncoder passwordEncoder, JWTService jwtService, AuthenticationManager authenticationManager, MailSender mailSender, ClientRepository clientRepository, MasterRepository masterRepository) {
         this.userRepository = userRepository;
         this.activationCodeRepository = activationCodeRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.mailSender = mailSender;
+        this.clientRepository = clientRepository;
+        this.masterRepository = masterRepository;
     }
     @Transactional
-    public AuthenticationResponse register(AuthenticationRequest request){
+    public AuthenticationResponse register(RegistrationRequest request){
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException(String.format(
                     "Email %s already exist.", request.getEmail()));
         }
 
-
-        var role = Role.USER;
         var user = request.map();
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRoles(Collections.singleton(role));
 
+        if (sendActivationCode)
+            sendActivationCode(user);
+        else
+            userRepository.save(user);
+        if (user.getRoles().contains(Role.CLIENT))
+            clientRepository.save(user.getClient());
+        if (user.getRoles().contains(Role.MASTER))
+            masterRepository.save(user.getMaster());
+
+        return getAuthenticationResponse(user);
+    }
+
+    private void sendActivationCode(User user) {
         var activationCode = ActivationCode.builder()
                 .code(getNewActivationCode())
                 .build();
@@ -65,18 +84,13 @@ public class AuthenticationService {
         user.setActivationCode(activationCode);
         activationCode.setUser(user);
 
+        mailSender.send(
+                user.getEmail(),
+                "Activation code",
+                String.format("Ваш код активаци: %s", user.getActivationCode().getCode())
+        );
         userRepository.save(user);
         activationCodeRepository.save(activationCode);
-
-        if (sendActivationCode) {
-            mailSender.send(
-                    user.getEmail(),
-                    "Activation code",
-                    String.format("Ваш код активаци: %s", user.getActivationCode().getCode())
-            );
-        }
-
-        return getAuthenticationResponse(user);
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -102,11 +116,9 @@ public class AuthenticationService {
     }
 
     private String getNewActivationCode(){
-        if (sendActivationCode)
-            return Integer.toString(ThreadLocalRandom
-                .current()
-                .nextInt(1000,9999)
-            );
-        return null;
+        return Integer.toString(ThreadLocalRandom
+            .current()
+            .nextInt(1000,9999)
+        );
     }
 }
