@@ -3,6 +3,7 @@ package com.prosvirnin.webregistration.controller.auth;
 import com.prosvirnin.webregistration.exception.auth.EmailAlreadyExistsException;
 import com.prosvirnin.webregistration.model.auth.AuthenticationRequest;
 import com.prosvirnin.webregistration.model.auth.AuthenticationResponse;
+import com.prosvirnin.webregistration.model.auth.RegistrationRequest;
 import com.prosvirnin.webregistration.service.auth.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,13 +28,15 @@ public class AuthenticationController {
     }
 
     @Operation(
-            description = "A method for registering a user by mail and password. After sending this request, " +
+            description = "A method for registering a user. After sending this request, " +
                     "an email will be sent to the specified email address with the confirmation " +
-                    "code that is needed to activate the account."
+                    "code that is needed to activate the account. " +
+                    "If the birthDate = null, then the master is registered, otherwise the Client. " +
+                    "Date format is yyyy-MM-dd."
     )
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register (
-            @RequestBody AuthenticationRequest request)
+            @RequestBody RegistrationRequest request)
     {
         return ResponseEntity.ok(authenticationService.register(request));
     }
