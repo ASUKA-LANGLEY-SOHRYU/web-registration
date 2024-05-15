@@ -46,6 +46,7 @@ public class User implements UserDetails {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id", referencedColumnName = "id")
+    @JsonIgnore
     private Image image;
 
     @JsonIgnore

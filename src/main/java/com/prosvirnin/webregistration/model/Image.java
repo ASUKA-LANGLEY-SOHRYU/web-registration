@@ -2,11 +2,19 @@ package com.prosvirnin.webregistration.model;
 
 import com.prosvirnin.webregistration.model.user.Master;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Blob;
 
 @Entity
 @Table(name = "image")
+@Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Image {
 
     @Id
@@ -19,13 +27,12 @@ public class Image {
 
     @Lob
     @Column(name = "file")
-    private Blob file;
+    private byte[] file;
 
     @ManyToOne
     @JoinColumn(name = "master_id")
     private Master master;
 
-// файл уже содержит информацию о типе.
-//    @Column(name = "type")
-//    private String type;
+    @Column(name = "type")
+    private String type;
 }

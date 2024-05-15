@@ -8,4 +8,10 @@ import lombok.Data;
 public class EditResponse {
     private String message;
     private EditStatus status;
+
+    public static EditResponse ok(){
+        return EditResponse.builder()
+                .status(EditStatus.OK)
+                .build();
+    }
 }
