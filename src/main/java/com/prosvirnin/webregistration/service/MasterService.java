@@ -3,13 +3,11 @@ package com.prosvirnin.webregistration.service;
 import com.prosvirnin.webregistration.exception.auth.EmailAlreadyExistsException;
 import com.prosvirnin.webregistration.model.user.Address;
 import com.prosvirnin.webregistration.model.user.User;
-import com.prosvirnin.webregistration.model.user.dto.EditClientRequest;
 import com.prosvirnin.webregistration.model.user.dto.EditMasterRequest;
 import com.prosvirnin.webregistration.model.user.dto.EditResponse;
+import com.prosvirnin.webregistration.model.user.dto.EditStatus;
 import com.prosvirnin.webregistration.repository.AddressRepository;
 import com.prosvirnin.webregistration.repository.MasterRepository;
-import com.prosvirnin.webregistration.repository.UserRepository;
-import com.prosvirnin.webregistration.service.auth.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -54,19 +52,9 @@ public class MasterService {
         if (editMasterRequest.getLinkCode() != null)
             master.setLinkCode(editMasterRequest.getLinkCode());
 
-        var editUserDTO = editMasterRequest.getEditUserDTO();
-        try {
-            userService.editUser(user, editUserDTO);
-        } catch (EmailAlreadyExistsException e){
-            return EditResponse.builder()
-                    .status(e.getMessage())
-                    .build();
-        }
-
-        userService.save(user);
-        masterRepository.save(master);
-        return EditResponse.builder()
-                .status("OK!")
-                .build();
+        var response = userService.getEditResponse(editMasterRequest, user);
+        if (response.getStatus().equals(EditStatus.OK))
+            masterRepository.save(master);
+        return response;
     }
 }

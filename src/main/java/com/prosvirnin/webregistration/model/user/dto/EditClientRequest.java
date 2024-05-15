@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class EditClientRequest {
-    private EditUserDTO editUserDTO;
+public class EditClientRequest implements EditUserRequest{
+    private EditUserDTO user;
     private Date birthDate;
 }

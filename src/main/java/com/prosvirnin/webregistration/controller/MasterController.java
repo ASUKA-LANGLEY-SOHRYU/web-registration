@@ -30,7 +30,7 @@ public class MasterController {
 
     @Operation(
             description = "Editing a master profile. Values equal to null will be ignored. " +
-                    "After changing your email, you will receive an activation on your new email." +
+                    "After changing your email, you will receive an activation on your new email. " +
                     "After activation, you need to authenticate again."
     )
     @PostMapping("/me/edit")

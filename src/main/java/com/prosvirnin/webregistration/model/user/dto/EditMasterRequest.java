@@ -5,8 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class EditMasterRequest {
-    private EditUserDTO editUserDTO;
+public class EditMasterRequest implements EditUserRequest{
+    private EditUserDTO user;
     private String description;
     private EditAddressDTO address;
     private String linkCode;

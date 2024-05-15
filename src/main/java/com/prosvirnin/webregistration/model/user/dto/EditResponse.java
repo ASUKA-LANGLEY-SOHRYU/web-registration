@@ -6,5 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class EditResponse {
-    private String status;
+    private String message;
+    private EditStatus status;
 }
