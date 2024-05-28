@@ -1,6 +1,5 @@
 package com.prosvirnin.webregistration.service;
 
-import com.prosvirnin.webregistration.exception.auth.EmailAlreadyExistsException;
 import com.prosvirnin.webregistration.model.user.User;
 import com.prosvirnin.webregistration.model.user.dto.EditClientRequest;
 import com.prosvirnin.webregistration.model.user.dto.EditResponse;

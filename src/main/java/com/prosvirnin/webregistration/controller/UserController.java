@@ -41,6 +41,17 @@ public class UserController {
     }
 
     @Operation(
+            description = "Getting a user by id"
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getById (@PathVariable("id") Long id)
+    {
+        return ResponseEntity.ok(userService.findById(id).orElse(null));
+    }
+
+
+
+    @Operation(
             description = "Upload profile image"
     )
     @PostMapping(value = "/me/edit/profilePicture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

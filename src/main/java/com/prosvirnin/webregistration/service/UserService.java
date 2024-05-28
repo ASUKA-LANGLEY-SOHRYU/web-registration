@@ -10,14 +10,9 @@ import com.prosvirnin.webregistration.model.user.dto.EditUserRequest;
 import com.prosvirnin.webregistration.repository.ImageRepository;
 import com.prosvirnin.webregistration.repository.UserRepository;
 import com.prosvirnin.webregistration.service.auth.AccountActivationService;
-import com.prosvirnin.webregistration.service.auth.AuthenticationService;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.FileUrlResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,8 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.sql.Blob;
-import java.sql.SQLException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -52,6 +46,10 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    public Optional<User> findById(Long id){
+        return userRepository.findById(id);
     }
 
     public User getAuthenticatedUser(Authentication authentication){

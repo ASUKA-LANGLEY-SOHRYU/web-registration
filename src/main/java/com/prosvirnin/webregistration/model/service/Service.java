@@ -1,6 +1,7 @@
 package com.prosvirnin.webregistration.model.service;
 
 import com.prosvirnin.webregistration.model.Image;
+import com.prosvirnin.webregistration.model.service.category.Category;
 import com.prosvirnin.webregistration.model.user.Master;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
