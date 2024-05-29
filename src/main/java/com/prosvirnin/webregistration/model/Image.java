@@ -25,9 +25,8 @@ public class Image {
     @Column(name = "name")
     private String name;
 
-    @Lob
     @Column(name = "file")
-    private byte[] file;
+    private String fileName;
 
     @ManyToOne
     @JoinColumn(name = "master_id")

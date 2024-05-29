@@ -11,6 +11,9 @@ services:
     environment:
       - SERVER_PORT=8080
       - SPRING_DATASOURCE_URL=jdbc:postgresql://webreg_db:5432/webRegistration
+      - UPLOAD-FILE_PATH=/var/lib/files
+    volumes:
+      - user-images:/var/lib/files
     networks:
       - webreg-net
 
@@ -49,6 +52,7 @@ services:
 volumes:
   db-webreg:
   pgadmin:
+  user-images:
 
 networks:
   webreg-net:

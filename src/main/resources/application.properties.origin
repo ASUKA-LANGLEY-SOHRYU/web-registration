@@ -17,3 +17,5 @@ spring.mail.protocol=smtps
 mail.debug=true
 
 sendActivationCode=true
+
+upload-file.path=

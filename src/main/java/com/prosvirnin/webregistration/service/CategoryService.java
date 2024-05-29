@@ -53,6 +53,7 @@ public class CategoryService {
         if (!getAuthenticatedMaster(authentication).getId().equals(category.getMaster().getId())){
             return false;
         }
+        //TODO: каскадное удаление сервисов
         categoryRepository.deleteById(categoryId);
         return true;
     }
