@@ -1,11 +1,7 @@
 package com.prosvirnin.webregistration.controller;
 
-import com.prosvirnin.webregistration.model.service.category.Category;
-import com.prosvirnin.webregistration.model.service.category.CategoryDTO;
-import com.prosvirnin.webregistration.model.user.dto.EditClientRequest;
 import com.prosvirnin.webregistration.model.user.dto.EditMasterRequest;
 import com.prosvirnin.webregistration.model.user.dto.EditResponse;
-import com.prosvirnin.webregistration.service.CategoryService;
 import com.prosvirnin.webregistration.service.MasterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/masters")

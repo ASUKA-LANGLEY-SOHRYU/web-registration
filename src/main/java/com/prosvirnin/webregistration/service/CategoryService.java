@@ -1,7 +1,7 @@
 package com.prosvirnin.webregistration.service;
 
-import com.prosvirnin.webregistration.model.service.category.Category;
-import com.prosvirnin.webregistration.model.service.category.CategoryDTO;
+import com.prosvirnin.webregistration.model.service.Category;
+import com.prosvirnin.webregistration.model.service.dto.CategoryDTO;
 import com.prosvirnin.webregistration.model.user.Master;
 import com.prosvirnin.webregistration.model.user.User;
 import com.prosvirnin.webregistration.repository.CategoryRepository;
@@ -20,15 +20,18 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final MasterRepository masterRepository;
 
+    private final MasterService masterService;
+
     @Autowired
-    public CategoryService(CategoryRepository categoryRepository, MasterRepository masterRepository) {
+    public CategoryService(CategoryRepository categoryRepository, MasterRepository masterRepository, MasterService masterService) {
         this.categoryRepository = categoryRepository;
         this.masterRepository = masterRepository;
+        this.masterService = masterService;
     }
 
     @Transactional
     public void save(Authentication authentication, Category category){
-        category.setMaster(getAuthenticatedMaster(authentication));
+        category.setMaster(masterService.getAuthenticatedMaster(authentication));
         categoryRepository.save(category);
     }
 
@@ -39,7 +42,7 @@ public class CategoryService {
     @Transactional
     public boolean edit(Authentication authentication, Long categoryId, CategoryDTO edited){
         var category = categoryRepository.findById(categoryId).orElseThrow();
-        if (!getAuthenticatedMaster(authentication).getId().equals(category.getMaster().getId())){
+        if (!masterService.getAuthenticatedMaster(authentication).getId().equals(category.getMaster().getId())){
             return false;
         }
         editCategory(category, edited);
@@ -50,7 +53,7 @@ public class CategoryService {
     @Transactional
     public boolean delete(Authentication authentication, Long categoryId){
         var category = categoryRepository.findById(categoryId).orElseThrow();
-        if (!getAuthenticatedMaster(authentication).getId().equals(category.getMaster().getId())){
+        if (!masterService.getAuthenticatedMaster(authentication).getId().equals(category.getMaster().getId())){
             return false;
         }
         //TODO: каскадное удаление сервисов
@@ -59,7 +62,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public void edit(Long categoryId, CategoryDTO edited){
+    void edit(Long categoryId, CategoryDTO edited){
         var category = categoryRepository.findById(categoryId).orElseThrow();
 
         editCategory(category, edited);
@@ -80,15 +83,15 @@ public class CategoryService {
     }
 
     public List<Category> findAllByAuthentication(Authentication authentication){
-        return findAllByMasterId(getAuthenticatedMaster(authentication).getId());
+        return findAllByMasterId(masterService.getAuthenticatedMaster(authentication).getId());
     }
 
     public List<Category> findAllByMasterId(Long id){
         return categoryRepository.findByMasterId(id);
     }
 
-    private Master getAuthenticatedMaster(Authentication authentication){
-        var user = (User) authentication.getPrincipal();
-        return masterRepository.findById(user.getMaster().getId()).orElseThrow();
+    public Category findById(Long id){
+        return categoryRepository.findById(id).orElseThrow();
     }
+
 }

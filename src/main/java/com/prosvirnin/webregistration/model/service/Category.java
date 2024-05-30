@@ -1,4 +1,4 @@
-package com.prosvirnin.webregistration.model.service.category;
+package com.prosvirnin.webregistration.model.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.prosvirnin.webregistration.model.user.Master;

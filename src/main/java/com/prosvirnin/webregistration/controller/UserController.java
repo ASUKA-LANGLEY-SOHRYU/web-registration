@@ -65,7 +65,7 @@ public class UserController {
     @Operation(
             description = "Download profile picture"
     )
-    @PostMapping("/me/get/profilePicture")
+    @GetMapping("/me/get/profilePicture")
     public ResponseEntity<Resource> getProfilePicture (Authentication authentication)
     {
         Resource resource = userService.getProfilePicture(authentication);

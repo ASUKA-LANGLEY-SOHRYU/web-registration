@@ -2,6 +2,7 @@ package com.prosvirnin.webregistration.service;
 
 import com.prosvirnin.webregistration.exception.auth.EmailAlreadyExistsException;
 import com.prosvirnin.webregistration.model.user.Address;
+import com.prosvirnin.webregistration.model.user.Master;
 import com.prosvirnin.webregistration.model.user.User;
 import com.prosvirnin.webregistration.model.user.dto.EditMasterRequest;
 import com.prosvirnin.webregistration.model.user.dto.EditResponse;
@@ -56,5 +57,10 @@ public class MasterService {
         if (response.getStatus().equals(EditStatus.OK))
             masterRepository.save(master);
         return response;
+    }
+
+    public Master getAuthenticatedMaster(Authentication authentication){
+        var user = (User) authentication.getPrincipal();
+        return masterRepository.findById(user.getMaster().getId()).orElseThrow();
     }
 }

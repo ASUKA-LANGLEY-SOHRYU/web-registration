@@ -1,9 +1,8 @@
 package com.prosvirnin.webregistration.controller;
 
-import com.prosvirnin.webregistration.model.service.category.Category;
-import com.prosvirnin.webregistration.model.service.category.CategoryDTO;
+import com.prosvirnin.webregistration.model.service.Category;
+import com.prosvirnin.webregistration.model.service.dto.CategoryDTO;
 import com.prosvirnin.webregistration.service.CategoryService;
-import com.prosvirnin.webregistration.service.MasterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

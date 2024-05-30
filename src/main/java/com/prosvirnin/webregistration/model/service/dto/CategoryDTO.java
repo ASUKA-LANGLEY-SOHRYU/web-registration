@@ -1,6 +1,7 @@
-package com.prosvirnin.webregistration.model.service.category;
+package com.prosvirnin.webregistration.model.service.dto;
 
 import com.prosvirnin.webregistration.core.Mapper;
+import com.prosvirnin.webregistration.model.service.Category;
 import lombok.Data;
 
 @Data

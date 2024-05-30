@@ -1,6 +1,6 @@
 package com.prosvirnin.webregistration.repository;
 
-import com.prosvirnin.webregistration.model.service.category.Category;
+import com.prosvirnin.webregistration.model.service.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

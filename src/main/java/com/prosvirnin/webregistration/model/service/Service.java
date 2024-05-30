@@ -1,13 +1,14 @@
 package com.prosvirnin.webregistration.model.service;
 
 import com.prosvirnin.webregistration.model.Image;
-import com.prosvirnin.webregistration.model.service.category.Category;
 import com.prosvirnin.webregistration.model.user.Master;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
 import java.util.Date;
 
 @Entity
@@ -15,6 +16,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Service {
 
     @Id
@@ -35,9 +37,8 @@ public class Service {
     @Column(name = "price")
     private Long price;
 
-    @Temporal(TemporalType.TIME)
     @Column(name = "duration", nullable = false)
-    private Date duration;
+    private Duration duration;
 
     @OneToOne
     @JoinColumn(name = "image_id")

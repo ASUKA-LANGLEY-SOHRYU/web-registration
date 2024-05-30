@@ -98,11 +98,7 @@ public class UserService implements UserDetailsService {
     public EditResponse changeProfilePicture(Authentication authentication,
                                              MultipartFile multipartFile){
         try {
-            Image image = Image.builder()
-                    .fileName(fileService.saveFile(multipartFile))
-                    .type(multipartFile.getContentType())
-                    .name(multipartFile.getOriginalFilename())
-                    .build();
+            Image image = fileService.saveImage(multipartFile);
             System.out.println(image.getType());
             var user = getAuthenticatedUser(authentication);
             user.setImage(image);
@@ -117,7 +113,6 @@ public class UserService implements UserDetailsService {
         return EditResponse.ok();
     }
 
-    @Transactional
     public Resource getProfilePicture(Authentication authentication){
         var user = getAuthenticatedUser(authentication);
         var fileName = user.getImage().getFileName();

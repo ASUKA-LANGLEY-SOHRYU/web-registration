@@ -1,5 +1,6 @@
 package com.prosvirnin.webregistration.service;
 
+import com.prosvirnin.webregistration.model.Image;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -32,6 +33,14 @@ public class FileService {
         file.transferTo(new File(path + File.separator + fileName));
 
         return fileName;
+    }
+
+    public Image saveImage(MultipartFile file) throws IOException{
+        return Image.builder()
+                .name(file.getOriginalFilename())
+                .type(file.getContentType())
+                .fileName(saveFile(file))
+                .build();
     }
 
     public Resource getResource(String fileName){
