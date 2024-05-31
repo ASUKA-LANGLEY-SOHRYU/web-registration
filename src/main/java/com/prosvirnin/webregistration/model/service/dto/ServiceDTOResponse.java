@@ -1,5 +1,6 @@
 package com.prosvirnin.webregistration.model.service.dto;
 
+import com.prosvirnin.webregistration.model.service.Category;
 import com.prosvirnin.webregistration.model.service.Service;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,8 @@ public class ServiceDTOResponse {
 
     private Duration duration;
 
+    private Category category;
+
     public static ServiceDTOResponse fromService(Service service){
         long durationInMinutes = service.getDuration().toMinutes();
         long hours = durationInMinutes / 60;
@@ -29,6 +32,7 @@ public class ServiceDTOResponse {
                 .price(service.getPrice())
                 .description(service.getDescription())
                 .duration(duration)
+                .category(service.getCategory())
                 .build();
     }
 }
