@@ -1,6 +1,8 @@
 package com.prosvirnin.webregistration.service;
 
 import com.prosvirnin.webregistration.model.Image;
+import com.prosvirnin.webregistration.repository.ImageRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -11,6 +13,8 @@ import javax.sql.rowset.serial.SerialBlob;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Blob;
 import java.sql.SQLException;
@@ -21,6 +25,13 @@ public class FileService {
 
     @Value("${upload-file.path}")
     private String path;
+
+    private final ImageRepository imageRepository;
+
+    @Autowired
+    public FileService(ImageRepository imageRepository) {
+        this.imageRepository = imageRepository;
+    }
 
     public String saveFile(MultipartFile file) throws IOException {
         if (file == null)
@@ -33,6 +44,24 @@ public class FileService {
         file.transferTo(new File(path + File.separator + fileName));
 
         return fileName;
+    }
+
+    public boolean deleteFileByName(String filename){
+        Path location = Paths.get(path).resolve(filename).normalize().toAbsolutePath();
+        try {
+        if (Files.exists(location))
+            Files.delete(location);
+        else
+            return false;
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    public boolean deleteFileByImage(Image image){
+        return deleteFileByName(image.getFileName());
     }
 
     public Image saveImage(MultipartFile file) throws IOException{
@@ -51,5 +80,9 @@ public class FileService {
             System.out.println(e.getMessage());
         }
         return null;
+    }
+
+    public Resource getImageById(Long id){
+        return getResource(imageRepository.findById(id).orElseThrow().getFileName());
     }
 }

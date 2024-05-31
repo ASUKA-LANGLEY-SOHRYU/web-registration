@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "master")
@@ -49,7 +48,7 @@ public class Master {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "master")
     @JsonIgnore
-    private Set<Image> additionalImages;
+    private List<Image> additionalImages;
 
     @OneToOne
     @JoinColumn(name = "address_id")
