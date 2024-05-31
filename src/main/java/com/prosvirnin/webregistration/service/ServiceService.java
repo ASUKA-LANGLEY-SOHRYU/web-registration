@@ -38,7 +38,7 @@ public class ServiceService {
     }
 
     @Transactional
-    public String save(Long categoryId, ServiceDTORequest serviceDTO, Authentication authentication){
+    public Long save(Long categoryId, ServiceDTORequest serviceDTO, Authentication authentication){
         var master = masterService.getAuthenticatedMaster(authentication);
         var service = com.prosvirnin.webregistration.model.service.Service.builder()
                 .master(master)
@@ -50,8 +50,7 @@ public class ServiceService {
                 .serviceStatus(ServiceStatus.STATUS1) //TODO: Добавить статусы
                 .build();
         System.out.println(service.getDuration());
-        serviceRepository.save(service);
-        return "OK!";
+        return serviceRepository.save(service).getId();
     }
 
     @Transactional
@@ -129,7 +128,6 @@ public class ServiceService {
         if (!masterService.getAuthenticatedMaster(authentication).getId().equals(service.getMaster().getId())){
             return false;
         }
-        //TODO: каскадное удаление сервисов
         serviceRepository.deleteById(serviceId);
         return true;
     }

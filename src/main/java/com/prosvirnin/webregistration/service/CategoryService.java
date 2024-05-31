@@ -30,9 +30,9 @@ public class CategoryService {
     }
 
     @Transactional
-    public void save(Authentication authentication, Category category){
+    public Long save(Authentication authentication, Category category){
         category.setMaster(masterService.getAuthenticatedMaster(authentication));
-        categoryRepository.save(category);
+        return categoryRepository.save(category).getId();
     }
 
     public List<Category> findAll(){

@@ -33,10 +33,10 @@ public class ServiceController {
     }
 
     @Operation(
-            description = "Adds a service to the master by token"
+            description = "Adds a service to the master by token. Returns service id"
     )
     @PostMapping("/me/categories/{category_id}/services")
-    private ResponseEntity<String> createService(@PathVariable("category_id") Long id,
+    private ResponseEntity<Long> createService(@PathVariable("category_id") Long id,
                                                  @RequestBody ServiceDTORequest serviceDTO,
                                                  Authentication authentication)
     {

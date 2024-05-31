@@ -27,12 +27,11 @@ public class CategoryController {
     }
 
     @Operation(
-            description = "Adds a category of services to the master by token"
+            description = "Adds a category of services to the master by token. Returns category id"
     )
     @PostMapping("/me/categories")
-    public ResponseEntity<String> createCategory(Authentication authentication, @RequestBody CategoryDTO categoryDTO){
-        categoryService.save(authentication, categoryDTO.map());
-        return ResponseEntity.ok("OK!");
+    public ResponseEntity<Long> createCategory(Authentication authentication, @RequestBody CategoryDTO categoryDTO){
+        return ResponseEntity.ok(categoryService.save(authentication, categoryDTO.map()));
     }
 
     @Operation(
