@@ -6,6 +6,7 @@ import com.prosvirnin.webregistration.model.user.Master;
 import com.prosvirnin.webregistration.model.user.User;
 import com.prosvirnin.webregistration.repository.CategoryRepository;
 import com.prosvirnin.webregistration.repository.MasterRepository;
+import com.prosvirnin.webregistration.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,13 @@ import java.util.List;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final MasterRepository masterRepository;
-
+    private final ServiceRepository serviceRepository;
     private final MasterService masterService;
 
     @Autowired
-    public CategoryService(CategoryRepository categoryRepository, MasterRepository masterRepository, MasterService masterService) {
+    public CategoryService(CategoryRepository categoryRepository, ServiceRepository serviceRepository, MasterService masterService) {
         this.categoryRepository = categoryRepository;
-        this.masterRepository = masterRepository;
+        this.serviceRepository = serviceRepository;
         this.masterService = masterService;
     }
 
@@ -56,7 +56,7 @@ public class CategoryService {
         if (!masterService.getAuthenticatedMaster(authentication).getId().equals(category.getMaster().getId())){
             return false;
         }
-        //TODO: каскадное удаление сервисов
+        serviceRepository.deleteByCategoryId(categoryId);
         categoryRepository.deleteById(categoryId);
         return true;
     }
