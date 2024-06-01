@@ -43,6 +43,10 @@ public class MasterService {
         this.imageRepository = imageRepository;
     }
 
+    public Master findById(Long id){
+        return masterRepository.findById(id).orElseThrow();
+    }
+
     @Transactional
     public EditResponse editMe(Authentication authentication, EditMasterRequest editMasterRequest){
         var user = (User) authentication.getPrincipal();

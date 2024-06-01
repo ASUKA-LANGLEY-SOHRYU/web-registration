@@ -1,5 +1,6 @@
 package com.prosvirnin.webregistration.service;
 
+import com.prosvirnin.webregistration.model.user.Client;
 import com.prosvirnin.webregistration.model.user.User;
 import com.prosvirnin.webregistration.model.user.dto.EditClientRequest;
 import com.prosvirnin.webregistration.model.user.dto.EditResponse;
@@ -36,5 +37,10 @@ public class ClientService {
         if (response.getStatus().equals(EditStatus.OK))
             clientRepository.save(client);
         return response;
+    }
+
+    public Client getAuthenticatedClient(Authentication authentication){
+        var user = (User) authentication.getPrincipal();
+        return user.getClient();
     }
 }

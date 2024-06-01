@@ -8,6 +8,7 @@ import com.prosvirnin.webregistration.model.user.User;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ public class RegistrationRequest implements Mapper<User> {
     private String firstName;
     private String lastName;
     private String phoneNumber;
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @Override
     public User map() {

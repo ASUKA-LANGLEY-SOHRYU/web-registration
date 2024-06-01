@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -33,5 +34,5 @@ public class Client {
 
     @Temporal(value = TemporalType.DATE)
     @Column(name = "birthdate", nullable = false)
-    private Date birthDate;
+    private LocalDate birthDate;
 }
