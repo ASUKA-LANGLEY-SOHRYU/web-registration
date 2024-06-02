@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
         ),
         servers = {
                 @Server(
-                        url = "http://localhost:8080",
+                        url = "http://158.160.136.24/:8080",
                         description = "Local server"
                 )
         },
