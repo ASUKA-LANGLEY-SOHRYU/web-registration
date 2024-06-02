@@ -11,6 +11,7 @@ import com.prosvirnin.webregistration.repository.ImageRepository;
 import com.prosvirnin.webregistration.repository.UserRepository;
 import com.prosvirnin.webregistration.service.auth.AccountActivationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.Authentication;
@@ -32,10 +33,10 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
     private final AccountActivationService accountActivationService;
-    private final FileService fileService;
+    private final IFileService fileService;
 
     @Autowired
-    public UserService(UserRepository userRepository, ImageRepository imageRepository, AccountActivationService accountActivationService, FileService fileService) {
+    public UserService(UserRepository userRepository, ImageRepository imageRepository, AccountActivationService accountActivationService, @Qualifier("s3Service") IFileService fileService) {
         this.userRepository = userRepository;
         this.imageRepository = imageRepository;
         this.accountActivationService = accountActivationService;
@@ -104,7 +105,7 @@ public class UserService implements UserDetailsService {
             user.setImage(image);
             imageRepository.save(image);
             userRepository.save(user);
-        } catch (IOException e){
+        } catch (Exception e){
             return EditResponse.builder()
                     .status(EditStatus.ERROR)
                     .message(e.getMessage())
@@ -113,7 +114,7 @@ public class UserService implements UserDetailsService {
         return EditResponse.ok();
     }
 
-    public Resource getProfilePicture(Authentication authentication){
+    public byte[] getProfilePicture(Authentication authentication){
         var user = getAuthenticatedUser(authentication);
         var fileName = user.getImage().getFileName();
         return fileService.getResource(fileName);

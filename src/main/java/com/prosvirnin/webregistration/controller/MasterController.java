@@ -3,12 +3,13 @@ package com.prosvirnin.webregistration.controller;
 import com.prosvirnin.webregistration.model.user.dto.EditMasterRequest;
 import com.prosvirnin.webregistration.model.user.dto.EditResponse;
 import com.prosvirnin.webregistration.service.FileService;
+import com.prosvirnin.webregistration.service.IFileService;
 import com.prosvirnin.webregistration.service.MasterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,10 +26,10 @@ import java.util.List;
 public class MasterController {
 
     private final MasterService masterService;
-    private final FileService fileService;
+    private final IFileService fileService;
 
     @Autowired
-    public MasterController(MasterService masterService, FileService fileService) {
+    public MasterController(MasterService masterService,@Qualifier("s3Service") IFileService fileService) {
         this.masterService = masterService;
         this.fileService = fileService;
     }
@@ -69,7 +70,7 @@ public class MasterController {
 
     @Operation(description = "Returns additional image by image id")
     @GetMapping("/additional_images/{id}")
-    public ResponseEntity<Resource> getAdditionalImageById(@PathVariable("id") Long id){
+    public ResponseEntity<byte[]> getAdditionalImageById(@PathVariable("id") Long id){
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(fileService.getImageById(id));

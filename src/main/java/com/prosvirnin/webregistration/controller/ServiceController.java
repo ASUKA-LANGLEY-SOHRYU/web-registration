@@ -76,9 +76,9 @@ public class ServiceController {
             description = "Download service image by service id"
     )
     @GetMapping("/services/{id}/image")
-    public ResponseEntity<Resource> getProfilePicture (@PathVariable Long id)
+    public ResponseEntity<byte[]> getProfilePicture (@PathVariable Long id)
     {
-        Resource resource = serviceService.getPicture(id);
+        byte[] resource = serviceService.getPicture(id);
         if (resource == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return ResponseEntity.ok()

@@ -66,9 +66,9 @@ public class UserController {
             description = "Download profile picture"
     )
     @GetMapping("/me/get/profilePicture")
-    public ResponseEntity<Resource> getProfilePicture (Authentication authentication)
+    public ResponseEntity<byte[]> getProfilePicture (Authentication authentication)
     {
-        Resource resource = userService.getProfilePicture(authentication);
+        byte[] resource = userService.getProfilePicture(authentication);
         if (resource == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return ResponseEntity.ok()

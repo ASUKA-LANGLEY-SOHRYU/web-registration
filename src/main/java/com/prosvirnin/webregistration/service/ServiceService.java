@@ -7,6 +7,7 @@ import com.prosvirnin.webregistration.model.service.dto.ServiceDTOResponse;
 import com.prosvirnin.webregistration.repository.ImageRepository;
 import com.prosvirnin.webregistration.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,13 @@ import java.util.stream.Collectors;
 public class ServiceService {
 
     private final ServiceRepository serviceRepository;
-    private final FileService fileService;
+    private final IFileService fileService;
     private final CategoryService categoryService;
     private final ImageRepository imageRepository;
     private final MasterService masterService;
 
     @Autowired
-    public ServiceService(ServiceRepository serviceRepository, FileService fileService, CategoryService categoryService, ImageRepository imageRepository, MasterService masterService) {
+    public ServiceService(ServiceRepository serviceRepository, @Qualifier("s3Service") IFileService fileService, CategoryService categoryService, ImageRepository imageRepository, MasterService masterService) {
         this.serviceRepository = serviceRepository;
         this.fileService = fileService;
         this.categoryService = categoryService;
@@ -62,7 +63,7 @@ public class ServiceService {
         Image image;
         try{
             image = fileService.saveImage(serviceImage);
-        }catch (IOException e){
+        }catch (Exception e){
             System.out.println(e.getMessage());
             return "ERROR!";
         }
@@ -73,7 +74,7 @@ public class ServiceService {
         return "OK!";
     }
 
-    public Resource getPicture(Long serviceId){
+    public byte[] getPicture(Long serviceId){
         var image = serviceRepository.findById(serviceId).orElseThrow()
                 .getImage();
         if (image == null)

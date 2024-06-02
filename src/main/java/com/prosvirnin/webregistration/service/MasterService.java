@@ -12,6 +12,7 @@ import com.prosvirnin.webregistration.repository.AddressRepository;
 import com.prosvirnin.webregistration.repository.ImageRepository;
 import com.prosvirnin.webregistration.repository.MasterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -31,11 +32,11 @@ public class MasterService {
     private final UserService userService;
     private final AddressRepository addressRepository;
     private final MasterRepository masterRepository;
-    private final FileService fileService;
+    private final IFileService fileService;
     private final ImageRepository imageRepository;
 
     @Autowired
-    public MasterService(UserService userService, AddressRepository addressRepository, MasterRepository masterRepository, FileService fileService, ImageRepository imageRepository) {
+    public MasterService(UserService userService, AddressRepository addressRepository, MasterRepository masterRepository, @Qualifier("s3Service") IFileService fileService, ImageRepository imageRepository) {
         this.userService = userService;
         this.addressRepository = addressRepository;
         this.masterRepository = masterRepository;
@@ -82,7 +83,7 @@ public class MasterService {
         Image image;
         try {
             image = fileService.saveImage(file);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             return false;
         }
