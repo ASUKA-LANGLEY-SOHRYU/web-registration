@@ -14,6 +14,4 @@ COPY --from=builder /opt/app/target/*.jar /opt/app/*.jar
 RUN mkdir -p ~/.postgresql
 RUN wget "https://storage.yandexcloud.net/cloud-certs/CA.pem" --output-document ~/.postgresql/root.crt
 RUN chmod 0600 ~/.postgresql/root.crt
-WORKDIR /
-ENTRYPOINT ["ls", "-la", "~/.postgresql"]
-#ENTRYPOINT ["java", "-jar", "/opt/app/*.jar"]
+ENTRYPOINT ["java", "-jar", "/opt/app/*.jar"]
