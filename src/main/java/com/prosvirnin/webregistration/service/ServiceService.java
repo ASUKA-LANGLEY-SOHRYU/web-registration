@@ -30,7 +30,7 @@ public class ServiceService {
     private final MasterService masterService;
 
     @Autowired
-    public ServiceService(ServiceRepository serviceRepository, @Qualifier("s3Service") IFileService fileService, CategoryService categoryService, ImageRepository imageRepository, MasterService masterService) {
+    public ServiceService(ServiceRepository serviceRepository, IFileService fileService, CategoryService categoryService, ImageRepository imageRepository, MasterService masterService) {
         this.serviceRepository = serviceRepository;
         this.fileService = fileService;
         this.categoryService = categoryService;

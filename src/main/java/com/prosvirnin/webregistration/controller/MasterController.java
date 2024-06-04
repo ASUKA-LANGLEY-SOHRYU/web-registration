@@ -2,7 +2,6 @@ package com.prosvirnin.webregistration.controller;
 
 import com.prosvirnin.webregistration.model.user.dto.EditMasterRequest;
 import com.prosvirnin.webregistration.model.user.dto.EditResponse;
-import com.prosvirnin.webregistration.service.FileService;
 import com.prosvirnin.webregistration.service.IFileService;
 import com.prosvirnin.webregistration.service.MasterService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +28,7 @@ public class MasterController {
     private final IFileService fileService;
 
     @Autowired
-    public MasterController(MasterService masterService,@Qualifier("s3Service") IFileService fileService) {
+    public MasterController(MasterService masterService, IFileService fileService) {
         this.masterService = masterService;
         this.fileService = fileService;
     }

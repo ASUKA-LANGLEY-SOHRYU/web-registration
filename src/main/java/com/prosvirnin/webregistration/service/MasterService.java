@@ -36,7 +36,7 @@ public class MasterService {
     private final ImageRepository imageRepository;
 
     @Autowired
-    public MasterService(UserService userService, AddressRepository addressRepository, MasterRepository masterRepository, @Qualifier("s3Service") IFileService fileService, ImageRepository imageRepository) {
+    public MasterService(UserService userService, AddressRepository addressRepository, MasterRepository masterRepository, IFileService fileService, ImageRepository imageRepository) {
         this.userService = userService;
         this.addressRepository = addressRepository;
         this.masterRepository = masterRepository;

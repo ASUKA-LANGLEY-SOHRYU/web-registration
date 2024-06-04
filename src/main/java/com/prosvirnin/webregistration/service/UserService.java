@@ -36,7 +36,7 @@ public class UserService implements UserDetailsService {
     private final IFileService fileService;
 
     @Autowired
-    public UserService(UserRepository userRepository, ImageRepository imageRepository, AccountActivationService accountActivationService, @Qualifier("s3Service") IFileService fileService) {
+    public UserService(UserRepository userRepository, ImageRepository imageRepository, AccountActivationService accountActivationService, IFileService fileService) {
         this.userRepository = userRepository;
         this.imageRepository = imageRepository;
         this.accountActivationService = accountActivationService;
