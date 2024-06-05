@@ -36,4 +36,6 @@ build/
 
 /files
 
-/src/main/resources/**.properties
+/src/main/resources/application-local.properties
+/src/main/resources/application-server.properties
+/src/main/resources/application.properties
