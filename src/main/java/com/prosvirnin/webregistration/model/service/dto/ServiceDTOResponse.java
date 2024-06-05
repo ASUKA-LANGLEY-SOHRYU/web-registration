@@ -9,15 +9,10 @@ import lombok.Data;
 @Data
 public class ServiceDTOResponse {
     private Long id;
-
     private String name;
-
     private String description;
-
     private Long price;
-
     private Duration duration;
-
     private Category category;
 
     public static ServiceDTOResponse fromService(Service service){

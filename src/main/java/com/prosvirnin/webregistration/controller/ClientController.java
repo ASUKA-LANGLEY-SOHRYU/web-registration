@@ -36,4 +36,12 @@ public class ClientController {
     {
         return ResponseEntity.ok(clientService.editMe(authentication, editClientRequest));
     }
+
+    @Operation(description = "Removes a master from a client by token")
+    @DeleteMapping("/me/masters/{id}")
+    public ResponseEntity<String> removeMaster(Authentication authentication, @PathVariable("id") Long id){
+        if (clientService.deleteMaster(authentication, id))
+            return ResponseEntity.ok("OK!");
+        return ResponseEntity.ok("ERROR!");
+    }
 }

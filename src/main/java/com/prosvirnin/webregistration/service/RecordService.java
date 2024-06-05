@@ -55,6 +55,11 @@ public class RecordService {
         if (!isInRange)
             return null;
 
+        client.getMasters().add(master);
+        master.getClients().add(client);
+        masterService.save(master);
+        clientService.save(client);
+
         return recordRepository.save(Record.builder()
                         .date(request.getDate())
                         .client(client)

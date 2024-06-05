@@ -28,7 +28,7 @@ public class Client {
     @JsonBackReference
     private User user;
 
-    @ManyToMany(mappedBy = "clients")
+    @ManyToMany(mappedBy = "clients", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Master> masters;
 

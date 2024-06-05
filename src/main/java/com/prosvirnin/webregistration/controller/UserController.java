@@ -2,6 +2,7 @@ package com.prosvirnin.webregistration.controller;
 
 import com.prosvirnin.webregistration.model.user.User;
 import com.prosvirnin.webregistration.model.user.dto.EditResponse;
+import com.prosvirnin.webregistration.model.user.dto.UserDTO;
 import com.prosvirnin.webregistration.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,19 +26,21 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserService userService;
+    private final ProfileService profileService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ProfileService profileService) {
         this.userService = userService;
+        this.profileService = profileService;
     }
 
     @Operation(
             description = "Getting a user by token"
     )
     @GetMapping("/me")
-    public ResponseEntity<User> me (Authentication authentication)
+    public ResponseEntity<UserDTO> me (Authentication authentication)
     {
-        return ResponseEntity.ok(userService.getAuthenticatedUser(authentication));
+        return ResponseEntity.ok(profileService.getAuthenticatedUserDTO(authentication));
     }
 
     @Operation(

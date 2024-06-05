@@ -2,15 +2,17 @@ package com.prosvirnin.webregistration.service;
 
 import com.prosvirnin.webregistration.exception.auth.EmailAlreadyExistsException;
 import com.prosvirnin.webregistration.model.Image;
+import com.prosvirnin.webregistration.model.service.dto.CategoryDTO;
+import com.prosvirnin.webregistration.model.service.dto.ScheduleResponse;
+import com.prosvirnin.webregistration.model.service.dto.ServiceDTOResponse;
 import com.prosvirnin.webregistration.model.user.Address;
 import com.prosvirnin.webregistration.model.user.Master;
 import com.prosvirnin.webregistration.model.user.User;
 import com.prosvirnin.webregistration.model.user.dto.EditMasterRequest;
 import com.prosvirnin.webregistration.model.user.dto.EditResponse;
 import com.prosvirnin.webregistration.model.user.dto.EditStatus;
-import com.prosvirnin.webregistration.repository.AddressRepository;
-import com.prosvirnin.webregistration.repository.ImageRepository;
-import com.prosvirnin.webregistration.repository.MasterRepository;
+import com.prosvirnin.webregistration.model.user.dto.MasterProfile;
+import com.prosvirnin.webregistration.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
@@ -34,14 +36,20 @@ public class MasterService {
     private final MasterRepository masterRepository;
     private final IFileService fileService;
     private final ImageRepository imageRepository;
+    private final ServiceRepository serviceRepository;
+    private final CategoryRepository categoryRepository;
+    private final ScheduleRepository scheduleRepository;
 
     @Autowired
-    public MasterService(UserService userService, AddressRepository addressRepository, MasterRepository masterRepository, IFileService fileService, ImageRepository imageRepository) {
+    public MasterService(UserService userService, AddressRepository addressRepository, MasterRepository masterRepository, IFileService fileService, ImageRepository imageRepository, ServiceRepository serviceRepository, CategoryRepository categoryRepository, ScheduleRepository scheduleRepository) {
         this.userService = userService;
         this.addressRepository = addressRepository;
         this.masterRepository = masterRepository;
         this.fileService = fileService;
         this.imageRepository = imageRepository;
+        this.serviceRepository = serviceRepository;
+        this.categoryRepository = categoryRepository;
+        this.scheduleRepository = scheduleRepository;
     }
 
     public Master findById(Long id){
@@ -76,6 +84,11 @@ public class MasterService {
             masterRepository.save(master);
         return response;
     }
+    @Transactional
+    public void save(Master master){
+        masterRepository.save(master);
+    }
+
 
     @Transactional
     public boolean uploadAdditionalImage(Authentication authentication, MultipartFile file){
@@ -123,6 +136,31 @@ public class MasterService {
         var result =  fileService.deleteFileByImage(image);
         imageRepository.deleteById(imageId);
         return result;
+    }
+
+    public MasterProfile getMasterProfile(User masterAsUser){
+        var image = masterAsUser.getImage();
+        Long imgid = null;
+        if (image != null)
+            imgid = image.getId();
+
+        return MasterProfile.builder()
+                .fullName(masterAsUser.getFirstName() + " " + masterAsUser.getLastName())
+                .description(masterAsUser.getMaster().getDescription())
+                .address(masterAsUser.getMaster().getAddress())
+                .messenger(masterAsUser.getMaster().getMessenger())
+                .profilePictureId(imgid)
+                .additionalImagesIds(masterAsUser.getMaster().getAdditionalImages().stream().map(Image::getId).toList())
+                .phoneNumber(masterAsUser.getPhone())
+                .services(serviceRepository.findByMasterId(masterAsUser.getMaster().getId()).stream().map(ServiceDTOResponse::fromService).toList())
+                .categories(categoryRepository.findByMasterId(masterAsUser.getMaster().getId()))
+                .schedule(ScheduleResponse.fromSchedules(scheduleRepository.findAllByMasterId(masterAsUser.getMaster().getId())))
+                .build();
+    }
+
+    public MasterProfile getMasterProfile(Long userId){
+        var masterAsUser = userService.findById(userId).orElseThrow();
+        return getMasterProfile(masterAsUser);
     }
 
     public Master getAuthenticatedMaster(Authentication authentication){

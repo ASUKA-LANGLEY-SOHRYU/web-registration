@@ -46,7 +46,7 @@ public class Master {
     @JsonIgnore
     private List<Client> clients;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "master")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "master")
     @JsonIgnore
     private List<Image> additionalImages;
 

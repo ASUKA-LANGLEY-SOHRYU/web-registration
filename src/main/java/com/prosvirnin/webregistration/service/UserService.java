@@ -3,10 +3,7 @@ package com.prosvirnin.webregistration.service;
 import com.prosvirnin.webregistration.exception.auth.EmailAlreadyExistsException;
 import com.prosvirnin.webregistration.model.Image;
 import com.prosvirnin.webregistration.model.user.User;
-import com.prosvirnin.webregistration.model.user.dto.EditResponse;
-import com.prosvirnin.webregistration.model.user.dto.EditStatus;
-import com.prosvirnin.webregistration.model.user.dto.EditUserDTO;
-import com.prosvirnin.webregistration.model.user.dto.EditUserRequest;
+import com.prosvirnin.webregistration.model.user.dto.*;
 import com.prosvirnin.webregistration.repository.ImageRepository;
 import com.prosvirnin.webregistration.repository.UserRepository;
 import com.prosvirnin.webregistration.service.auth.AccountActivationService;
@@ -56,6 +53,7 @@ public class UserService implements UserDetailsService {
     public User getAuthenticatedUser(Authentication authentication){
         return (User) authentication.getPrincipal();
     }
+
 
     public void editUser(User user, EditUserDTO editUserDTO){
         if (editUserDTO.getEmail() != null) {

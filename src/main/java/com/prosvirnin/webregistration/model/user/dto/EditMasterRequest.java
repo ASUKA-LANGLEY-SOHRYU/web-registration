@@ -10,4 +10,5 @@ public class EditMasterRequest implements EditUserRequest{
     private String description;
     private EditAddressDTO address;
     private String linkCode;
+    private String messenger;
 }

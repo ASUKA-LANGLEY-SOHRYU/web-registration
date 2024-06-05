@@ -2,6 +2,7 @@ package com.prosvirnin.webregistration.controller;
 
 import com.prosvirnin.webregistration.model.user.dto.EditMasterRequest;
 import com.prosvirnin.webregistration.model.user.dto.EditResponse;
+import com.prosvirnin.webregistration.model.user.dto.MasterProfile;
 import com.prosvirnin.webregistration.service.IFileService;
 import com.prosvirnin.webregistration.service.MasterService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,13 +68,13 @@ public class MasterController {
         return ResponseEntity.ok(masterService.getAllAdditionalImagesByMasterId(id));
     }
 
-    @Operation(description = "Returns additional image by image id")
-    @GetMapping("/additional_images/{id}")
-    public ResponseEntity<byte[]> getAdditionalImageById(@PathVariable("id") Long id){
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(fileService.getImageById(id));
-    }
+//    @Operation(description = "Returns additional image by image id")
+//    @GetMapping("/additional_images/{id}")
+//    public ResponseEntity<byte[]> getAdditionalImageById(@PathVariable("id") Long id){
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.IMAGE_JPEG)
+//                .body(fileService.getImageById(id));
+//    }
 
     @Operation(description = "Deletes an image by id")
     @DeleteMapping("/additional_images/{id}")
@@ -82,5 +83,11 @@ public class MasterController {
         if (masterService.deleteAdditionalImageById(authentication, id))
             return ResponseEntity.ok("OK!");
         return ResponseEntity.ok("ERROR!");
+    }
+
+    @Operation(description = "Returns the master by id.")
+    @GetMapping("/{id}")
+    public ResponseEntity<MasterProfile> getMasterById(@PathVariable("id") Long id){
+        return ResponseEntity.ok(masterService.getMasterProfile(id));
     }
 }
