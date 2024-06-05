@@ -9,7 +9,7 @@ spring.flyway.enabled=false
 
 spring.mail.host=smtp.yandex.ru
 spring.mail.username=master.mate.noreply@ya.ru
-spring.mail.password=oswhuutyeexfbaij
+spring.mail.password=
 spring.mail.port=465
 spring.mail.protocol=smtps
 mail.debug=true
