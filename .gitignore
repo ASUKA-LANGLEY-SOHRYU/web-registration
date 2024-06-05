@@ -35,3 +35,5 @@ build/
 .vscode/
 
 /files
+
+/src/main/resources/**.properties
