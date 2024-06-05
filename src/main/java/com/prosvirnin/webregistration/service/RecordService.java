@@ -21,20 +21,21 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class RecordService {
-
     private final RecordRepository recordRepository;
     private final ClientService clientService;
     private final MasterService masterService;
     private final ScheduleRepository scheduleRepository;
     private final ServiceRepository serviceRepository;
+    private final MailSender mailSender;
 
     @Autowired
-    public RecordService(RecordRepository recordRepository, ClientService clientService, MasterService masterService, ScheduleRepository scheduleRepository, ServiceRepository serviceRepository) {
+    public RecordService(RecordRepository recordRepository, ClientService clientService, MasterService masterService, ScheduleRepository scheduleRepository, ServiceRepository serviceRepository, MailSender mailSender) {
         this.recordRepository = recordRepository;
         this.clientService = clientService;
         this.masterService = masterService;
         this.scheduleRepository = scheduleRepository;
         this.serviceRepository = serviceRepository;
+        this.mailSender = mailSender;
     }
 
     @Transactional
@@ -59,6 +60,17 @@ public class RecordService {
         master.getClients().add(client);
         masterService.save(master);
         clientService.save(client);
+
+        mailSender.send(master.getUser().getEmail(), "Запись",
+                String.format("Запись на %s %s.\nУслуга: %s.\nКлиент: %s %s\nКомментарий: %s",
+                        request.getDate(),
+                        request.getTimeFrom(),
+                        service.getName(),
+                        client.getUser().getFirstName(),
+                        client.getUser().getLastName(),
+                        request.getComment()
+                )
+        );
 
         return recordRepository.save(Record.builder()
                         .date(request.getDate())
@@ -101,6 +113,16 @@ public class RecordService {
             ((user.getMaster() != null) && !user.getMaster().getId().equals(record.getMaster().getId())))
                 return "ERROR!";
         record.setRecordStatus(RecordStatus.CANCELLED);
+        var master = record.getMaster();
+        mailSender.send(master.getUser().getEmail(), "Запись",
+                String.format("Запись отменена на %s %s.\nУслуга: %s.\nКлиент: %s %s",
+                        record.getDate(),
+                        record.getTimeFrom(),
+                        record.getService().getName(),
+                        record.getClient().getUser().getFirstName(),
+                        record.getClient().getUser().getLastName()
+                )
+        ); //TODO: Добавить уведомления
         recordRepository.save(record);
         return "OK!";
     }
