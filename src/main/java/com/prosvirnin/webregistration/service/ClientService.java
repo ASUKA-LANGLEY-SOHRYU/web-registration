@@ -48,6 +48,16 @@ public class ClientService {
     }
 
     @Transactional
+    public void addMaster(Authentication authentication, Long masterId){
+        var client = getAuthenticatedClient(authentication);
+        var master = masterRepository.findById(masterId).orElseThrow();
+        client.getMasters().add(master);
+        master.getClients().add(client);
+        clientRepository.save(client);
+        masterRepository.save(master);
+    }
+
+    @Transactional
     public boolean deleteMaster(Authentication authentication, Long masterId){
         var client = getAuthenticatedClient(authentication);
         client.getMasters().remove(masterRepository.findById(masterId).orElseThrow());

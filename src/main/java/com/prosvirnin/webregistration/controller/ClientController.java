@@ -44,4 +44,11 @@ public class ClientController {
             return ResponseEntity.ok("OK!");
         return ResponseEntity.ok("ERROR!");
     }
+
+    @Operation(description = "Adds a master from a client by token")
+    @PutMapping("/me/masters/{id}")
+    public ResponseEntity<String> addMaster(Authentication authentication, @PathVariable("id") Long id){
+        clientService.addMaster(authentication, id);
+        return ResponseEntity.ok("OK!");
+    }
 }
