@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 @Data
 public class MasterProfile {
+    private Long masterId;
     private String fullName;
     private String description;
     private Address address;

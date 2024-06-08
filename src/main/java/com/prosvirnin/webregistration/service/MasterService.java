@@ -145,6 +145,7 @@ public class MasterService {
             imgid = image.getId();
 
         return MasterProfile.builder()
+                .masterId(masterAsUser.getMaster().getId())
                 .fullName(masterAsUser.getFirstName() + " " + masterAsUser.getLastName())
                 .description(masterAsUser.getMaster().getDescription())
                 .address(masterAsUser.getMaster().getAddress())

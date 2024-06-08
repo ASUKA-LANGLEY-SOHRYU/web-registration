@@ -85,7 +85,7 @@ public class MasterController {
         return ResponseEntity.ok("ERROR!");
     }
 
-    @Operation(description = "Returns the master by id.")
+    @Operation(description = "Returns the master by user id.")
     @GetMapping("/{id}")
     public ResponseEntity<MasterProfile> getMasterById(@PathVariable("id") Long id){
         return ResponseEntity.ok(masterService.getMasterProfile(id));
