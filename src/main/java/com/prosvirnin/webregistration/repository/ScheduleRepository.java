@@ -1,6 +1,7 @@
 package com.prosvirnin.webregistration.repository;
 
 import com.prosvirnin.webregistration.model.service.Schedule;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
@@ -18,6 +20,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     @Query("from Schedule s where s.master.id = :id and s.date = :date")
     List<Schedule> findAllByMasterIdAndDate(Long id, LocalDate date);
+
+    Stream<Schedule> findAllByMasterIdAndDate(Long id, LocalDate date, Sort sort);
 
     @Modifying
     @Transactional

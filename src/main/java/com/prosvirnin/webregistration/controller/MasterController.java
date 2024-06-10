@@ -1,5 +1,6 @@
 package com.prosvirnin.webregistration.controller;
 
+import com.prosvirnin.webregistration.model.service.dto.TimeSlot;
 import com.prosvirnin.webregistration.model.user.dto.EditMasterRequest;
 import com.prosvirnin.webregistration.model.user.dto.EditResponse;
 import com.prosvirnin.webregistration.model.user.dto.MasterProfile;
@@ -16,6 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -89,5 +92,13 @@ public class MasterController {
     @GetMapping("/{id}")
     public ResponseEntity<MasterProfile> getMasterById(@PathVariable("id") Long id){
         return ResponseEntity.ok(masterService.getMasterProfile(id));
+    }
+
+    @Operation(description = "Returns available time slots.")
+    @GetMapping("/{masterId}/services/{serviceId}/timeslots")
+    public ResponseEntity<List<LocalTime>> getAvailableTimeSlots(@PathVariable("masterId") Long masterId,
+                                                                 @PathVariable("serviceId") Long serviceId,
+                                                                 @RequestParam("date") LocalDate date){
+        return ResponseEntity.ok(masterService.getAvailableTimeSlots(masterId, serviceId, date));
     }
 }

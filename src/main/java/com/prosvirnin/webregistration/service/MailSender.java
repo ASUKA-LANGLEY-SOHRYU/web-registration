@@ -13,12 +13,19 @@ public class MailSender {
     @Value("${spring.mail.username}")
     private String username;
     private final JavaMailSender javaMailSender;
+
+    @Value("${sendActivationCode}")
+    private boolean sendActivationCode;
+
     @Autowired
     public MailSender(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
     }
 
     public void send(String to, String subject, String message){
+        if (!sendActivationCode)
+            return;
+
         SimpleMailMessage mailMessage = new SimpleMailMessage();
 
         mailMessage.setFrom(username);
