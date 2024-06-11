@@ -1,30 +1,23 @@
 package com.prosvirnin.webregistration.service.auth;
 
 import com.prosvirnin.webregistration.exception.auth.EmailAlreadyExistsException;
-import com.prosvirnin.webregistration.model.auth.RegistrationRequest;
-import com.prosvirnin.webregistration.model.user.ActivationCode;
-import com.prosvirnin.webregistration.model.user.Role;
-import com.prosvirnin.webregistration.model.user.User;
-import com.prosvirnin.webregistration.model.account.ActivationResponse;
 import com.prosvirnin.webregistration.model.auth.AuthenticationRequest;
 import com.prosvirnin.webregistration.model.auth.AuthenticationResponse;
-import com.prosvirnin.webregistration.repository.ActivationCodeRepository;
+import com.prosvirnin.webregistration.model.auth.RegistrationRequest;
+import com.prosvirnin.webregistration.model.user.Role;
+import com.prosvirnin.webregistration.model.user.User;
 import com.prosvirnin.webregistration.repository.ClientRepository;
 import com.prosvirnin.webregistration.repository.MasterRepository;
 import com.prosvirnin.webregistration.repository.UserRepository;
-import com.prosvirnin.webregistration.service.MailSender;
 import com.prosvirnin.webregistration.service.security.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collections;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class AuthenticationService {
@@ -35,7 +28,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final ClientRepository clientRepository;
     private final MasterRepository masterRepository;
-    private  final AccountActivationService accountActivationService;
+    private final AccountActivationService accountActivationService;
 
 
     @Autowired
@@ -48,8 +41,9 @@ public class AuthenticationService {
         this.masterRepository = masterRepository;
         this.accountActivationService = accountActivationService;
     }
+
     @Transactional
-    public AuthenticationResponse register(RegistrationRequest request){
+    public AuthenticationResponse register(RegistrationRequest request) {
         if (userRepository.existsByEmail(request.getEmail()) ||
                 userRepository.existsByEmailToChange(request.getEmail())) {
             throw new EmailAlreadyExistsException(String.format(
@@ -60,7 +54,7 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         accountActivationService.sendActivationCode(user);
-        if(!accountActivationService.getSendActivationCode())
+        if (!accountActivationService.getSendActivationCode())
             userRepository.save(user);
 
         if (user.getRoles().contains(Role.CLIENT))
@@ -77,11 +71,16 @@ public class AuthenticationService {
         return getAuthenticationResponse(user);
     }
 
-    private AuthenticationResponse getAuthenticationResponse(User user){
+    private AuthenticationResponse getAuthenticationResponse(User user) {
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
+    }
+
+    public User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (User) authentication.getPrincipal();
     }
 
 }

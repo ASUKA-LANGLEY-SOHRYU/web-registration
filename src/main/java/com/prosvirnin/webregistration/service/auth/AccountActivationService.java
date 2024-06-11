@@ -22,7 +22,6 @@ public class AccountActivationService {
     private final ActivationCodeRepository activationCodeRepository;
     private final UserRepository userRepository;
 
-    //TODO: change name
     @Getter
     @Value("${sendActivationCode}")
     private Boolean sendActivationCode;

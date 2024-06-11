@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.prosvirnin.webregistration.service.TimeHelper.isInRange;
-import static com.prosvirnin.webregistration.service.TimeHelper.isOverlappingNotStrict;
 
 @Service
 @Transactional(readOnly = true)
@@ -56,12 +55,12 @@ public class MasterService {
         this.recordRepository = recordRepository;
     }
 
-    public Master findById(Long id){
+    public Master findById(Long id) {
         return masterRepository.findById(id).orElseThrow();
     }
 
     @Transactional
-    public EditResponse editMe(Authentication authentication, EditMasterRequest editMasterRequest){
+    public EditResponse editMe(Authentication authentication, EditMasterRequest editMasterRequest) {
         var user = (User) authentication.getPrincipal();
         var master = masterRepository.findById(user.getMaster().getId()).orElseThrow();
 
@@ -88,14 +87,15 @@ public class MasterService {
             masterRepository.save(master);
         return response;
     }
+
     @Transactional
-    public void save(Master master){
+    public void save(Master master) {
         masterRepository.save(master);
     }
 
 
     @Transactional
-    public boolean uploadAdditionalImage(Authentication authentication, MultipartFile file){
+    public boolean uploadAdditionalImage(Authentication authentication, MultipartFile file) {
         var master = getAuthenticatedMaster(authentication);
         Image image;
         try {
@@ -114,17 +114,17 @@ public class MasterService {
     }
 
 
-    public List<Long> getAllAdditionalImagesByAuthenticatedMaster(Authentication authentication){
+    public List<Long> getAllAdditionalImagesByAuthenticatedMaster(Authentication authentication) {
         var master = getAuthenticatedMaster(authentication);
         return getAllAdditionalImagesByMaster(master);
     }
 
-    public List<Long> getAllAdditionalImagesByMasterId(Long id){
+    public List<Long> getAllAdditionalImagesByMasterId(Long id) {
         var master = masterRepository.findById(id).orElseThrow();
         return getAllAdditionalImagesByMaster(master);
     }
 
-    private List<Long> getAllAdditionalImagesByMaster(Master master){
+    private List<Long> getAllAdditionalImagesByMaster(Master master) {
         return master.getAdditionalImages()
                 .stream()
                 .map(Image::getId)
@@ -132,17 +132,17 @@ public class MasterService {
     }
 
     @Transactional
-    public boolean deleteAdditionalImageById(Authentication authentication, Long imageId){
+    public boolean deleteAdditionalImageById(Authentication authentication, Long imageId) {
         var master = getAuthenticatedMaster(authentication);
         var image = imageRepository.findById(imageId).orElseThrow();
-        if(!image.getMaster().getId().equals(master.getId()))
+        if (!image.getMaster().getId().equals(master.getId()))
             return false;
-        var result =  fileService.deleteFileByImage(image);
+        var result = fileService.deleteFileByImage(image);
         imageRepository.deleteById(imageId);
         return result;
     }
 
-    public MasterProfile getMasterProfile(User masterAsUser){
+    public MasterProfile getMasterProfile(User masterAsUser) {
         var image = masterAsUser.getImage();
         Long imgid = null;
         if (image != null)
@@ -163,12 +163,12 @@ public class MasterService {
                 .build();
     }
 
-    public MasterProfile getMasterProfile(Long userId){
+    public MasterProfile getMasterProfile(Long userId) {
         var masterAsUser = userService.findById(userId).orElseThrow();
         return getMasterProfile(masterAsUser);
     }
 
-    public Master getAuthenticatedMaster(Authentication authentication){
+    public Master getAuthenticatedMaster(Authentication authentication) {
         var user = (User) authentication.getPrincipal();
         return masterRepository.findById(user.getMaster().getId()).orElseThrow();
     }
@@ -178,7 +178,7 @@ public class MasterService {
         var records = recordRepository.findAllByMasterIdAndDate(
                 masterId,
                 date,
-                Sort.by(Sort.Direction.ASC,"timeFrom")
+                Sort.by(Sort.Direction.ASC, "timeFrom")
         );
         var schedules = scheduleRepository.findAllByMasterIdAndDate(
                 masterId,
@@ -196,7 +196,7 @@ public class MasterService {
     public static List<LocalTime> getAvailableTimeSlots(List<TimeSlot> allTimeSlots, List<TimeSlot> recordsTimeSlots, Duration duration) {
         var result = new ArrayList<TimeSlot>();
         var i = 0;
-        for (var timeSlot : allTimeSlots){
+        for (var timeSlot : allTimeSlots) {
             if (timeSlot.getFrom().plus(duration).isAfter(timeSlot.getTo()))
                 continue;
             if (recordsTimeSlots.isEmpty() || !recordsTimeSlots.get(i).getFrom().isBefore(timeSlot.getTo())) {
@@ -204,7 +204,7 @@ public class MasterService {
                 continue;
             }
             result.addAll(getSlotsBetweenTime(duration, timeSlot.getFrom(), recordsTimeSlots.get(i).getFrom()));
-            while (i < recordsTimeSlots.size() && !recordsTimeSlots.get(i).getTo().isAfter(timeSlot.getTo())){
+            while (i < recordsTimeSlots.size() && !recordsTimeSlots.get(i).getTo().isAfter(timeSlot.getTo())) {
                 var nextStart = recordsTimeSlots.get(i).getTo();
                 LocalTime nextEnd;
                 if ((i == recordsTimeSlots.size() - 1) || recordsTimeSlots.get(i + 1).getFrom().isAfter(timeSlot.getTo()))
@@ -222,9 +222,9 @@ public class MasterService {
 
     public static List<TimeSlot> getSlotsBetweenTime(Duration duration, LocalTime start, LocalTime end) {
         var result = new ArrayList<TimeSlot>();
-        while (true){
+        while (true) {
             var nextGuess = TimeSlot.from(start, duration);
-            if(!isInRange(TimeSlot.from(start, end), nextGuess))
+            if (!isInRange(TimeSlot.from(start, end), nextGuess))
                 break;
             result.add(nextGuess);
             start = nextGuess.getTo();

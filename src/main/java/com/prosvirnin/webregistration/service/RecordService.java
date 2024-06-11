@@ -3,11 +3,12 @@ package com.prosvirnin.webregistration.service;
 import com.prosvirnin.webregistration.model.service.Record;
 import com.prosvirnin.webregistration.model.service.RecordStatus;
 import com.prosvirnin.webregistration.model.service.dto.RecordRequest;
-import com.prosvirnin.webregistration.model.user.User;
 import com.prosvirnin.webregistration.model.service.dto.RecordResponse;
+import com.prosvirnin.webregistration.model.user.User;
 import com.prosvirnin.webregistration.repository.RecordRepository;
 import com.prosvirnin.webregistration.repository.ScheduleRepository;
 import com.prosvirnin.webregistration.repository.ServiceRepository;
+import com.prosvirnin.webregistration.service.auth.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -27,28 +28,30 @@ public class RecordService {
     private final ScheduleRepository scheduleRepository;
     private final ServiceRepository serviceRepository;
     private final MailSender mailSender;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public RecordService(RecordRepository recordRepository, ClientService clientService, MasterService masterService, ScheduleRepository scheduleRepository, ServiceRepository serviceRepository, MailSender mailSender) {
+    public RecordService(RecordRepository recordRepository, ClientService clientService, MasterService masterService, ScheduleRepository scheduleRepository, ServiceRepository serviceRepository, MailSender mailSender, AuthenticationService authenticationService) {
         this.recordRepository = recordRepository;
         this.clientService = clientService;
         this.masterService = masterService;
         this.scheduleRepository = scheduleRepository;
         this.serviceRepository = serviceRepository;
         this.mailSender = mailSender;
+        this.authenticationService = authenticationService;
     }
 
     @Transactional
-    public Long create(Authentication authentication, Long masterId, RecordRequest request){
+    public Long create(Authentication authentication, Long masterId, RecordRequest request) {
         var client = clientService.getAuthenticatedClient(authentication);
         var master = masterService.findById(masterId);
         var schedules = scheduleRepository.findAllByMasterIdAndDate(masterId, request.getDate());
         var service = serviceRepository.findById(request.getServiceId()).orElseThrow();
         boolean isInRange = false;
-        for (var schedule : schedules){
+        for (var schedule : schedules) {
             var timeFrom = schedule.getTimeFrom();
             var timeTo = schedule.getTimeTo();
-            if (isInTimeRange(timeFrom, timeTo, request.getTimeFrom(), service.getDuration())){
+            if (isInTimeRange(timeFrom, timeTo, request.getTimeFrom(), service.getDuration())) {
                 isInRange = true;
                 break;
             }
@@ -73,45 +76,46 @@ public class RecordService {
         );
 
         return recordRepository.save(Record.builder()
-                        .date(request.getDate())
-                        .client(client)
-                        .master(master)
-                        .comment(request.getComment())
-                        .timeFrom(request.getTimeFrom())
-                        .timeTo(request.getTimeFrom().plus(service.getDuration()))
-                        .service(service)
-                        .recordStatus(RecordStatus.CREATED)
+                .date(request.getDate())
+                .client(client)
+                .master(master)
+                .comment(request.getComment())
+                .timeFrom(request.getTimeFrom())
+                .timeTo(request.getTimeFrom().plus(service.getDuration()))
+                .service(service)
+                .recordStatus(RecordStatus.CREATED)
                 .build()).getId();
     }
 
-    private boolean isInTimeRange(LocalTime start, LocalTime end, LocalTime target){
-        return !target.isBefore(start) && !target.isAfter(end);
+    private boolean isInTimeRange(LocalTime start, LocalTime end, LocalTime target) {
+        return !target.isBefore(start) && !target.isAfter(end); //TODO: вынести в time helper
     }
 
-    private boolean isInTimeRange(LocalTime start, LocalTime end, LocalTime from, Duration duration){
+    private boolean isInTimeRange(LocalTime start, LocalTime end, LocalTime from, Duration duration) {
         return isInTimeRange(start, end, from) && isInTimeRange(start, end, from.plus(duration));
     }
 
-    public List<RecordResponse> findAllRecordsByAuthentication(Authentication authentication){
+    public List<RecordResponse> findAllRecordsByAuthentication(Authentication authentication) {
         var masterId = masterService.getAuthenticatedMaster(authentication).getId();
         return recordRepository.findAllByMasterId(masterId).stream()
-                .map(r -> RecordResponse.fromRecord(r, false))
+                .map(r -> RecordResponse.fromRecord(r, null))
                 .toList();
     }
 
-    public List<RecordResponse> findAllRecordsByMasterId(Long masterId){
+    public List<RecordResponse> findAllRecordsByMasterId(Long masterId) {
+        var user = authenticationService.getAuthenticatedUser();
         return recordRepository.findAllByMasterId(masterId).stream()
-                .map(r -> RecordResponse.fromRecord(r, true))
+                .map(r -> RecordResponse.fromRecord(r, user))
                 .toList();
     }
 
     @Transactional
-    public String cancel(Authentication authentication, Long recordId){
+    public String cancel(Authentication authentication, Long recordId) {
         var user = (User) authentication.getPrincipal();
         var record = recordRepository.findById(recordId).orElseThrow();
         if (((user.getClient() != null) && !user.getClient().getId().equals(record.getClient().getId())) ||
-            ((user.getMaster() != null) && !user.getMaster().getId().equals(record.getMaster().getId())))
-                return "ERROR!";
+                ((user.getMaster() != null) && !user.getMaster().getId().equals(record.getMaster().getId())))
+            return "ERROR!";
         record.setRecordStatus(RecordStatus.CANCELLED);
         var master = record.getMaster();
         mailSender.send(master.getUser().getEmail(), "Запись",
@@ -128,8 +132,7 @@ public class RecordService {
     }
 
     @Transactional
-    public String cancelAllByDate(Authentication authentication, LocalDate date){
-        var master = masterService.getAuthenticatedMaster(authentication);
+    public String cancelAllByDate(Authentication authentication, LocalDate date) {
         var records = recordRepository.findAllByDate(date);
         records.forEach(r -> r.setRecordStatus(RecordStatus.CANCELLED));
         recordRepository.saveAll(records);

@@ -28,35 +28,35 @@ public class RecordController {
 
     @Operation(description = "Creates a record")
     @PostMapping("/{id}/records")
-    public ResponseEntity<Long> createRecord(Authentication authentication, @PathVariable("id") Long id, @RequestBody RecordRequest request){
+    public ResponseEntity<Long> createRecord(Authentication authentication, @PathVariable("id") Long id,
+                                             @RequestBody RecordRequest request) {
         return ResponseEntity.ok(recordService.create(authentication, id, request));
     }
 
-    @Operation(description = "Retrieving records by master id. Clients are hidden")
+    @Operation(description = "Retrieving records by master id. Private information is hidden from other users.")
     @GetMapping("/{id}/records")
-    public ResponseEntity<List<RecordResponse>> getAllRecordsByMasterId(@PathVariable("id") Long id){
+    public ResponseEntity<List<RecordResponse>> getAllRecordsByMasterId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(recordService.findAllRecordsByMasterId(id));
     }
 
     @Operation(description = "Retrieving records by master token")
     @GetMapping("/me/records")
-    public ResponseEntity<List<RecordResponse>> getAllMyRecords(Authentication authentication){
+    public ResponseEntity<List<RecordResponse>> getAllMyRecords(Authentication authentication) {
         return ResponseEntity.ok(recordService.findAllRecordsByAuthentication(authentication));
     }
 
     @Operation(description = "Cancels record by record id")
     @DeleteMapping("/records/{id}")
-    public ResponseEntity<String> cancelRecord(Authentication authentication, @PathVariable("id") Long id){
+    public ResponseEntity<String> cancelRecord(Authentication authentication, @PathVariable("id") Long id) {
         return ResponseEntity.ok(recordService.cancel(authentication, id));
     }
 
     @Operation(description = "Cancels all records for a given day by master token")
     @DeleteMapping("/me/records")
     public ResponseEntity<String> cancelRecordsByDate(Authentication authentication,
-                                                      @RequestBody LocalDate date){
+                                                      @RequestBody LocalDate date) {
         return ResponseEntity.ok(recordService.cancelAllByDate(authentication, date));
     }
 
-    //TODO:Получение доступных слотов
     //TODO:Контроллеры для получения мастеров/юзеров
 }
