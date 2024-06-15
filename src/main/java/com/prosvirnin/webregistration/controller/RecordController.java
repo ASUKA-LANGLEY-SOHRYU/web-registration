@@ -51,6 +51,12 @@ public class RecordController {
         return ResponseEntity.ok(recordService.cancel(authentication, id));
     }
 
+    @Operation(description = "Returns all client records by token.")
+    @GetMapping("/records/my")
+    public ResponseEntity<List<RecordResponse>> getAllClientRecords(){
+        return ResponseEntity.ok(recordService.getAllClientsRecords());
+    }
+
     @Operation(description = "Cancels all records for a given day by master token")
     @DeleteMapping("/me/records")
     public ResponseEntity<String> cancelRecordsByDate(Authentication authentication,

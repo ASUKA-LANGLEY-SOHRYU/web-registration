@@ -138,4 +138,13 @@ public class RecordService {
         recordRepository.saveAll(records);
         return "OK!";
     }
+
+    public List<RecordResponse> getAllClientsRecords(){
+        var user = authenticationService.getAuthenticatedUser();
+        if (user.getClient() == null)
+            return null;
+        return recordRepository.findAllByClientId(user.getClient().getId())
+                .map(r -> RecordResponse.fromRecord(r, user))
+                .toList();
+    }
 }

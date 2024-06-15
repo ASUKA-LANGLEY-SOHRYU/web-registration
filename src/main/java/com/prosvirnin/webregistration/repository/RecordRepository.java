@@ -19,4 +19,6 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
     List<Record> findAllByDate(LocalDate date);
 
     Stream<Record> findAllByMasterIdAndDate(Long id, LocalDate date, Sort sort);
+
+    Stream<Record> findAllByClientId(Long id);
 }

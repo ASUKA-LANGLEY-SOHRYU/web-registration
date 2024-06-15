@@ -16,14 +16,14 @@ import java.util.List;
 @Builder
 public class ClientProfile {
     private Long id;
-    private List<Long> mastersIds;
+    private List<Long> mastersUserIds;
     private LocalDate birthDate;
 
     public static ClientProfile fromClient(Client client){
         return ClientProfile.builder()
                 .id(client.getId())
                 .birthDate(client.getBirthDate())
-                .mastersIds(client.getMasters().stream().map(Master::getId).toList())
+                .mastersUserIds(client.getMasters().stream().map(Master::getUser).map(User::getId).toList())
                 .build();
     }
 }

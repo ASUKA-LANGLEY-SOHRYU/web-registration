@@ -47,9 +47,9 @@ public class UserController {
             description = "Getting a user by id"
     )
     @GetMapping("/{id}")
-    public ResponseEntity<User> getById (@PathVariable("id") Long id)
+    public ResponseEntity<UserDTO> getById (@PathVariable("id") Long id)
     {
-        return ResponseEntity.ok(userService.findById(id).orElse(null));
+        return ResponseEntity.ok(profileService.getUserDTOByUserId(id));
     }
 
 
